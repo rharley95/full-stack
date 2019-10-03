@@ -1,8 +1,8 @@
-<cms-header></cms-header>
+<cms-header (featureSelected)="onNavigate($event)"></cms-header>
 <div class="container">
   <div class="row">
       <div class="col-md-12">
-        <cms-contacts></cms-contacts>
+        <cms-contacts *ngIf= "loadedFeature === 'contact'"></cms-contacts>
        </div>
   </div>
 </div>
