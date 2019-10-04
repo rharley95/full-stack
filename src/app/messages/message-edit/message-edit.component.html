@@ -1,0 +1,40 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+
+        <form action="" id="document-edit">
+            <div class="row">
+
+                <div class="col-md-12 form-group">
+                    <label for="subject">Subject</label>
+                    <input
+                    type="text"
+                    id="subject"
+                    class="form-control"
+                    #subjectInput
+                    size="120"
+                    max="120">
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <label for="message">Message</label>
+                    <input
+                    type="text"
+                    id="message"
+                    class="form-control"
+                    #messageInput
+                    size="120"
+                    max="255">
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <button class="btn btn-success" type="submit" (click)="onSendMessage">Send</button>
+                    <button class="btn btn-danger" type="submit" (click)="onClear">Clear</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
