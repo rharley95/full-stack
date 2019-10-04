@@ -11,7 +11,7 @@ export class MessageListComponent implements OnInit {
   messages: Message[] = [
     new Message('1', 'test', 'test', 'test'),
     new Message('2', 'test', 'test', 'test')
-  ]
+  ];
 
   constructor() { }
 
@@ -20,5 +20,6 @@ export class MessageListComponent implements OnInit {
 
   onSendMessage(message: Message) {
     this.messages.push(message);
+    console.log(message);
   }
 }
