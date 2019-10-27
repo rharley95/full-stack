@@ -7,6 +7,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 export class DocumentListService {
     documentSelected = new EventEmitter<Document>();
     documents: Document[] = [];
+    documentChangeEvent: EventEmitter<Document[]> = new EventEmitter<Document[]>();
 
     constructor() {
         this.documents = MOCKDOCUMENTS;
@@ -28,5 +29,18 @@ export class DocumentListService {
         return null;
     }
 
-}
+    deleteDocument(document: Document): void {
+        if (!document) {
+            return;
+        }
 
+        const pos = this.documents.indexOf(document);
+        if (pos < 0) {
+            return;
+        }
+
+        this.documents.splice(pos, 1);
+        this.documentChangeEvent.emit(this.documents.slice());
+
+}
+}

@@ -2,9 +2,7 @@
 <div class="container">
   <div class="row">
       <div class="col-md-12">
-        <cms-contacts *ngIf= "loadedFeature === 'contact'"></cms-contacts>
-        <cms-documents *ngIf= "loadedFeature === 'document'"></cms-documents>
-        <cms-messages *ngIf= "loadedFeature === 'message'"></cms-messages>
+        <router-outlet></router-outlet>
        </div>
   </div>
 </div>

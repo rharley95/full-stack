@@ -7,6 +7,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 export class ContactService {
 
     contactSelected = new EventEmitter<Contact>();
+    contactChangedEvent: EventEmitter<Contact[]> = new EventEmitter<Contact[]>();
 
     contacts: Contact[] = [];
 
@@ -30,5 +31,15 @@ export class ContactService {
         return null;
     }
 
-}
+    deleteContact(contact: Contact): void {
+        if (!contact) {
+            return;
+        }
 
+        const pos = this.contacts.indexOf(contact);
+        if (pos < 0) {
+            return;
+        }
+
+}
+}

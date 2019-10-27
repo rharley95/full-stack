@@ -16,9 +16,9 @@
         <div class="btn-group" cmsDropwdown>
             <button type="button" class="btn btn-primary dropdown-toggle">Edit <span class="caret"></span></button>
             <ul class="dropdown-menu">
-                <li><a href="#">To Contact List</a></li>
-                <li><a href="#">Edit Contact</a></li>
-                <li><a href="#">Delete Contact</a></li>
+                <li><a style="cursor: pointer;">To Contact List</a></li>
+                <li><a style="cursor: pointer;" [routerLink]="['/contacts', contact?.id, 'edit']">Edit Contact</a></li>
+                <li><a style="cursor: pointer;" (click)="onDelete();">Delete Contact</a></li>
             </ul>
         </div>
     </div>
