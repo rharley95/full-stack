@@ -11,7 +11,7 @@ import { ContactDetailComponent } from './contacts/contact-detail/contact-detail
 
 
 const appRoutes: Routes = [
-    { path: '', pathMatch: 'full', redirectTo: '/documents' },
+    { path: '', pathMatch: 'full', redirectTo: '' },
     {
         path: 'documents', component: DocumentsComponent, children: [
             { path: 'new', component: DocumentEditComponent },
