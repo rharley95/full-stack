@@ -2,23 +2,46 @@ import { Document } from '../document.model';
 import { MOCKDOCUMENTS } from '../MOCKDOCUMENTS';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Subject } from 'rxjs';
-
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export class DocumentListService {
-    documentSelected = new EventEmitter<Document>();
     documents: Document[] = [];
+    documentSelected = new EventEmitter<Document>();
     documentChangeEvent: EventEmitter<Document[]> = new EventEmitter<Document[]>();
-    documentListChangedEvent: Subject<Document[]> = new Subject<Document[]>();
+    documentListChangeEvent: Subject<Document[]> = new Subject<Document[]>();
     maxDocumentId: number;
 
-    constructor() {
-        this.documents = MOCKDOCUMENTS;
+    constructor(private http: HttpClient) {
+        // this.documents = MOCKDOCUMENTS; because we're getting data from firebase I suppose?
         this.maxDocumentId = this.getMaxId();
+        this.getDocuments();
     }
 
-    getDocuments(): Document[] {
-        return this.documents.slice();
+    getDocuments(): void {
+        // return this.documents.slice(); changed for the new http get change
+        this
+            .http
+            .get('https://romina-cms.firebaseio.com/documents.json')
+            .subscribe(
+                // success function
+                (documents: Document[]) => {
+                    this.documents = documents;
+                    // this is where the sort function loop begins. I am making small parameters
+                    // for the documents and creating a block with the if else statement that only fires when it sorts.
+                    this.documents.sort((current: Document, next: Document): number => {
+                        if (current < next) {
+                            return -1;
+                        } else if (current === next) {
+                            return 0;
+                        } else {
+                            return 1;
+                        }
+                    });
+                    this.documentListChangeEvent.next(this.documents.slice());
+                }, (err: any) => {
+                    console.error(err);
+                });
     }
 
     getDocument(id: string): Document {
@@ -46,8 +69,7 @@ export class DocumentListService {
         }
 
         this.documents.splice(pos, 1);
-        let documentListClone = this.documents.slice();
-        this.documentChangeEvent.next(documentListClone);
+        this.storeDocuments();
 
     }
 
@@ -70,8 +92,7 @@ export class DocumentListService {
         this.maxDocumentId++;
         document.id = (this.maxDocumentId).toString();
         this.documents.push(document);
-        let documentListClone = this.documents.slice();
-        this.documentListChangedEvent.next(documentListClone);
+        this.storeDocuments();
     }
 
     updateDocument(originalDocument: Document, newDocument: Document) {
@@ -86,8 +107,20 @@ export class DocumentListService {
 
         newDocument.id = originalDocument.id;
         this.documents[pos] = newDocument;
-        let documentListClone = this.documents.slice();
-        this.documentListChangedEvent.next(documentListClone);
+        this.storeDocuments();
+    }
+
+    storeDocuments(): void {
+        let json = JSON.stringify(this.documents);
+        let header = new HttpHeaders();
+        header.set('Content-Type', 'application/json');
+        this
+            .http
+            .put('https://romina-cms.firebaseio.com/documents.json', json, {
+                headers: header
+            }).subscribe(() => {
+                this.documentListChangeEvent.next((this.documents.slice()));
+            });
     }
 
 

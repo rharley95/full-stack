@@ -2,25 +2,43 @@ import { Contact } from './contact.model';
 import { MOCKCONTACTS } from './MOCKCONTACTS';
 import { Injectable, EventEmitter } from '@angular/core';
 import { Subject } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 
 @Injectable()
 export class ContactService {
-
+    contacts: Contact[] = [];
     contactSelected = new EventEmitter<Contact>();
     contactChangedEvent: EventEmitter<Contact[]> = new EventEmitter<Contact[]>();
     contactListChangedEvent: Subject<Contact[]> = new Subject<Contact[]>();
     maxContactId: number;
 
-    contacts: Contact[] = [];
-
-    constructor() {
-        this.contacts = MOCKCONTACTS;
+    constructor(private http: HttpClient) {
+        // this.contacts = MOCKCONTACTS;
         this.maxContactId = this.getMaxId();
+        this.getContacts();
     }
 
-    getContacts(): Contact[] {
-        return this.contacts.slice();
+    getContacts(): void {
+        this
+            .http
+            .get('https://romina-cms.firebaseio.com/contacts.json')
+            .subscribe((contacts: Contact[]) => {
+                this.contacts = contacts;
+                this.maxContactId = this.getMaxId();
+                this.contacts.sort((current: Contact, next: Contact): number => {
+                    if (current.id < next.id) {
+                        return -1;
+                    } else if (current.id === next.id) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                });
+                this.contactListChangedEvent.next(this.contacts.slice());
+            }, (err: any) => {
+                console.error(err);
+            });
     }
 
     getContact(id: string): Contact {
@@ -46,10 +64,9 @@ export class ContactService {
         }
 
         this.contacts.splice(pos, 1);
-        let contactsListClone = this.contacts.slice();
-        this.contactChangedEvent.next(contactsListClone);
+        this.storeContacts();
 
-}
+    }
 
     getMaxId() {
         let maxId = 0;
@@ -71,8 +88,7 @@ export class ContactService {
         this.maxContactId++;
         contact.id = (this.maxContactId).toString();
         this.contacts.push(contact);
-        let contactsListClone = this.contacts.slice();
-        this.contactListChangedEvent.next(contactsListClone);
+        this.storeContacts();
     }
 
     updateContact(originalContact: Contact, newContact: Contact) {
@@ -87,8 +103,20 @@ export class ContactService {
 
         newContact.id = originalContact.id;
         this.contacts[pos] = newContact;
-        let contactsListClone = this.contacts.slice();
-        this.contactListChangedEvent.next(contactsListClone);
+        this.storeContacts();
+    }
+
+    storeContacts(): void {
+        let json = JSON.stringify(this.contacts);
+        let header = new HttpHeaders();
+        header.set('Content-Type', 'application/json');
+        this
+            .http
+            .put('https://romina-cms.firebaseio.com/contacts.json', json, {
+                headers: header
+            }).subscribe(() => {
+                this.contactListChangedEvent.next((this.contacts.slice()));
+            });
     }
 
 }

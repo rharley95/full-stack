@@ -1,18 +1,31 @@
 <div class="row">
   <div class="col-xs-12">
-    <button class="btn btn-success" [routerLink]="['new']">New Contact</button>
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col-xs-12">
-        <cms-contact-item 
-        *ngFor="let contactEl of contacts"
-        [contact]="contactEl"
-        dnd-draggable
-        [dragEnabled]="true"
-        [dragData]="contactEl"
-        [dropZones]="['contactGroup']">
-        </cms-contact-item>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="row">
+          <span class="title pad-left-right">Contacts</span>
+        </div>
+        <div class="row">
+          <div class="input-group pull-left pad-left-right col-xs-7">
+            <input type="text" (input)="onKeyPress(searchBox.value)" class="form-control"
+              placeHolder="Enter search value" #searchBox />
+            <div class="glyphicon glyphicon glyphicon-search input-group-addon" (click)="search(searchBox.value)">
+            </div>
+          </div>
+          <div class="pull-right pad-left-right">
+            <a class="btn btn-success" [routerLink]="['new']">New Contact</a>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <cms-contact-item *ngFor="let contact of contacts | contactsFilter:term" [contact]="contact" dnd-draggable
+              [dragEnabled]="true" [dragData]="contact" [dropZones]="['contactGroup']">
+            </cms-contact-item>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

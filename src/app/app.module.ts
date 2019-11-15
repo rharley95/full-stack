@@ -24,6 +24,8 @@ import { ContactViewComponent } from './contacts/contact-view/contact-view.compo
 import { WindRefService } from './wind-ref.service';
 import { FormsModule } from '@angular/forms';
 import { DndModule } from 'ng2-dnd';
+import { ContactsFilterPipe } from './contacts/contacts-filter.pipe';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -45,12 +47,14 @@ import { DndModule } from 'ng2-dnd';
     DocumentViewComponent,
     DocumentEditComponent,
     ContactEditComponent,
-    ContactViewComponent
+    ContactViewComponent,
+    ContactsFilterPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
     DndModule.forRoot()
   ],
   providers: [WindRefService],
